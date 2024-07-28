@@ -35,19 +35,19 @@ func main() {
 
 	conn, err := sql.Open("postgres", dbUrl)
 	if err != nil {
-		log.Fatalf("Can't connect to postgres database %v", err)
+		log.Fatalf("can't connect to postgres database %v", err)
 	}
 	defer conn.Close()
 
 	if err := conn.Ping(); err != nil {
-		log.Fatalf("Can't reach postgres database %v", err)
+		log.Fatalf("can't reach postgres database %v", err)
 	}
 
-	log.Println("Successfully connected to database")
+	log.Println("successfully connected to database")
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", handler)
+	mux.HandleFunc("GET /", handler)
 
 	addr := ":" + port
 	server := &http.Server{
