@@ -14,7 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 
-	"github.com/codebyaadi/rss-feed-agg/internals"
+	"github.com/codebyaadi/rss-feed-agg/internal"
 )
 
 func main() {
@@ -89,5 +89,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerErr(w http.ResponseWriter, r *http.Request) {
-	internals.RespondWithError(w, http.StatusInternalServerError, "something went wrong")
+	internal.RespondWithError(w, http.StatusInternalServerError, "something went wrong")
 }
