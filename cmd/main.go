@@ -13,6 +13,8 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+
+	"github.com/codebyaadi/rss-feed-agg/internals"
 )
 
 func main() {
@@ -48,6 +50,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", handler)
+	mux.HandleFunc("GET /err", handlerErr)
 
 	addr := ":" + port
 	server := &http.Server{
@@ -83,4 +86,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		name = "World"
 	}
 	fmt.Fprintf(w, "Hello %s!\n", name)
+}
+
+func handlerErr(w http.ResponseWriter, r *http.Request) {
+	internals.RespondWithError(w, http.StatusInternalServerError, "something went wrong")
 }

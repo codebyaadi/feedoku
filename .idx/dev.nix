@@ -9,6 +9,7 @@
     pkgs.air
     pkgs.go
     pkgs.sqlc
+    pkgs.goose
   ];
   # Sets environment variables in the workspace
   env = {};
