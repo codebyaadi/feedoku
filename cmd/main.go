@@ -14,7 +14,10 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 
-	"github.com/codebyaadi/rss-feed-agg/internal"
+	"github.com/codebyaadi/rss-feed-agg/config"
+	"github.com/codebyaadi/rss-feed-agg/internal/database"
+	"github.com/codebyaadi/rss-feed-agg/internal/handlers"
+	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 )
 
 func main() {
@@ -41,6 +44,12 @@ func main() {
 	}
 	defer conn.Close()
 
+	apiCfg := &config.ApiConfig{
+		DB: database.New(conn),
+	}
+
+	handler := &handlers.Handler{ApiConfig: apiCfg}
+
 	if err := conn.Ping(); err != nil {
 		log.Fatalf("can't reach postgres database %v", err)
 	}
@@ -49,8 +58,9 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", handler)
+	mux.HandleFunc("GET /", handlerHealth)
 	mux.HandleFunc("GET /err", handlerErr)
+	mux.HandleFunc(("POST /create-user"), handler.CreateUser)
 
 	addr := ":" + port
 	server := &http.Server{
@@ -80,7 +90,7 @@ func main() {
 	log.Println("server stopped")
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func handlerHealth(w http.ResponseWriter, r *http.Request) {
 	name := os.Getenv("NAME")
 	if name == "" {
 		name = "World"
@@ -89,5 +99,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerErr(w http.ResponseWriter, r *http.Request) {
-	internal.RespondWithError(w, http.StatusInternalServerError, "something went wrong")
+	utils.RespondWithError(w, http.StatusInternalServerError, "something went wrong")
 }
