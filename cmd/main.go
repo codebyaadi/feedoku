@@ -61,6 +61,7 @@ func main() {
 	mux.HandleFunc("GET /", handlerHealth)
 	mux.HandleFunc("GET /err", handlerErr)
 	mux.HandleFunc(("POST /create-user"), handler.CreateUser)
+	mux.HandleFunc(("GET /user"), handler.GetUserByAPIKey)
 
 	addr := ":" + port
 	server := &http.Server{

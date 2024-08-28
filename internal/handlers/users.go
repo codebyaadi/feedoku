@@ -48,3 +48,24 @@ func (apiCfg *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		"data":    convertDatabaseUserToAPIUser(user),
 	})
 }
+
+func (apiCfg *Handler) GetUserByAPIKey(w http.ResponseWriter, r *http.Request) {
+	apiKey, err := utils.GetAPIKey(r.Header)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, fmt.Sprintf("error getting api key: %v", err))
+		return
+	}
+
+	user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting user: %v", err))
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "user retrieved successfully",
+		"success": true,
+		"data":    convertDatabaseUserToAPIUser(user),
+	})
+}
