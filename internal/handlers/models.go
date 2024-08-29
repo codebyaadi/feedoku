@@ -12,6 +12,7 @@ type User struct {
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	ApiKey    string    `json:"api_key"`
 }
 
 // convertDatabaseUserToAPIUser converts a database user model to an API user model.
@@ -30,5 +31,6 @@ func convertDatabaseUserToAPIUser(dbUser database.User) User {
 		Name:      dbUser.Name,
 		CreatedAt: dbUser.CreatedAt,
 		UpdatedAt: dbUser.UpdatedAt,
+		ApiKey:    dbUser.ApiKey,
 	}
 }
