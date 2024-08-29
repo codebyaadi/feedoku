@@ -42,7 +42,7 @@ func (apiCfg *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
 		"message": "user created successfully",
 		"success": true,
 		"data":    convertDatabaseUserToAPIUser(user),
