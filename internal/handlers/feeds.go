@@ -45,3 +45,18 @@ func (apiCfg *Handler) CreateFeed(w http.ResponseWriter, r *http.Request, user d
 		"data":    convertDatabaseFeedToAPIFeed(feed),
 	})
 }
+
+func (apiCfg *Handler) GetAllFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := apiCfg.DB.GetFeeds(r.Context())
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting feeds: %v", err))
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "feeds retrieved successfully",
+		"success": true,
+		"data":    convertDatabaseFeedsToAPIFeeds(feeds),
+	})
+}

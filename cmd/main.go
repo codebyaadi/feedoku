@@ -63,6 +63,7 @@ func main() {
 	mux.HandleFunc(("POST /create-user"), handler.CreateUser)
 	mux.HandleFunc(("GET /user"), handler.AuthMiddleware(handler.GetUserByAPIKey))
 	mux.HandleFunc(("POST /create-feed"), handler.AuthMiddleware(handler.CreateFeed))
+	mux.HandleFunc(("GET /get-all-feeds"), handler.GetAllFeeds)
 
 	addr := ":" + port
 	server := &http.Server{

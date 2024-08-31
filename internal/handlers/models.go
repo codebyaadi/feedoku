@@ -64,3 +64,31 @@ func convertDatabaseFeedToAPIFeed(dbFeed database.Feed) Feed {
 		UserID:    dbFeed.UserID,
 	}
 }
+
+// convertDatabaseFeedsToAPIFeeds converts a slice of database feed models to a slice of API feed models.
+//
+// Parameters:
+//   - dbFeeds: A slice of database feed models, each containing fields like ID, Name, CreatedAt, UpdatedAt, Url, and UserID.
+//
+// Returns:
+//   - A slice of Feed structs, each containing the same ID, Name, CreatedAt, UpdatedAt, Url, and UserID fields,
+//     formatted for API responses.
+//
+// This function iterates over each database feed model, converts it to an API feed model using
+// convertDatabaseFeedToAPIFeed, and returns a slice of these API feed models.
+func convertDatabaseFeedsToAPIFeeds(dbFeeds []database.Feed) []Feed {
+	feeds := make([]Feed, len(dbFeeds))
+	for i, dbFeed := range dbFeeds {
+		feeds[i] = convertDatabaseFeedToAPIFeed(dbFeed)
+	}
+	return feeds
+}
+
+// func convertDatabaseFeedsToAPIFeeds(dbFeeds []database.Feed) []Feed {
+// 	feeds := []Feed{}
+// 	for _, dbFeed := range dbFeeds {
+// 		feeds = append(feeds, convertDatabaseFeedToAPIFeed(dbFeed))
+// 	}
+// 	// Suggested code may be subject to a license. Learn more: ~LicenseLog:1448372978.
+// 	return feeds
+// }
