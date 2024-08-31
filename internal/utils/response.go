@@ -35,7 +35,7 @@ func RespondWithJSON(w http.ResponseWriter, status int, payload interface{}) {
 // Parameters:
 //   - w: The http.ResponseWriter to send the response to.
 //   - status: The HTTP status code to set in the response. If the status code is 500 or higher,
-//             the error message will be logged as a server error.
+//     the error message will be logged as a server error.
 //   - msg: The error message to include in the response body.
 //
 // The function creates a JSON payload containing the error message and sends it using the
