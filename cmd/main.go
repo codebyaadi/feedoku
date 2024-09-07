@@ -61,16 +61,16 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", handlerHealth)
-	mux.HandleFunc("GET /err", handlerErr)
-	mux.HandleFunc(("POST /create-user"), handler.CreateUser)
-	mux.HandleFunc(("GET /user"), handler.AuthMiddleware(handler.GetUserByAPIKey))
-	mux.HandleFunc(("POST /create-feed"), handler.AuthMiddleware(handler.CreateFeed))
-	mux.HandleFunc(("GET /get-all-feeds"), handler.GetAllFeeds)
-	mux.HandleFunc(("POST /feed-follow"), handler.AuthMiddleware(handler.CreateFeedFollow))
-	mux.HandleFunc(("GET /feed-follow"), handler.AuthMiddleware(handler.GetAllFeedFollows))
-	mux.HandleFunc(("DELETE /feed-follow/{feedFollowID}"), handler.AuthMiddleware(handler.DeleteFeedFollow))
-	mux.HandleFunc(("GET /get-post"), handler.AuthMiddleware(handler.GetPostsForUser))
+	mux.HandleFunc("GET /health", handlerHealth)
+	mux.HandleFunc("GET /error", handlerErr)
+	mux.HandleFunc(("POST /users/create"), handler.CreateUser)
+	mux.HandleFunc(("GET /users"), handler.AuthMiddleware(handler.GetUserByAPIKey))
+	mux.HandleFunc(("POST /feeds/create"), handler.AuthMiddleware(handler.CreateFeed))
+	mux.HandleFunc(("GET /feeds"), handler.GetAllFeeds)
+	mux.HandleFunc(("POST /feeds/follow"), handler.AuthMiddleware(handler.CreateFeedFollow))
+	mux.HandleFunc(("GET /feeds/follow"), handler.AuthMiddleware(handler.GetAllFeedFollows))
+	mux.HandleFunc(("DELETE /feeds/follow/{feedFollowID}"), handler.AuthMiddleware(handler.DeleteFeedFollow))
+	mux.HandleFunc(("GET /posts"), handler.AuthMiddleware(handler.GetPostsForUser))
 
 	addr := ":" + port
 	server := &http.Server{
