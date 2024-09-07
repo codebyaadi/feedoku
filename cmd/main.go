@@ -44,9 +44,12 @@ func main() {
 	}
 	defer conn.Close()
 
+	db := database.New(conn)
 	apiCfg := &config.ApiConfig{
-		DB: database.New(conn),
+		DB: db,
 	}
+
+	go utils.RSSFeedScrapper(db, 10, time.Minute)
 
 	handler := &handlers.Handler{ApiConfig: apiCfg}
 
