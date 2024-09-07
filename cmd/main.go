@@ -70,6 +70,7 @@ func main() {
 	mux.HandleFunc(("POST /feed-follow"), handler.AuthMiddleware(handler.CreateFeedFollow))
 	mux.HandleFunc(("GET /feed-follow"), handler.AuthMiddleware(handler.GetAllFeedFollows))
 	mux.HandleFunc(("DELETE /feed-follow/{feedFollowID}"), handler.AuthMiddleware(handler.DeleteFeedFollow))
+	mux.HandleFunc(("GET /get-post"), handler.AuthMiddleware(handler.GetPostsForUser))
 
 	addr := ":" + port
 	server := &http.Server{

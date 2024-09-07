@@ -101,7 +101,7 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 	}
 
 	for _, item := range rssFeed.Channel.Item {
-		
+
 		description := sql.NullString{}
 		if item.Description != "" {
 			description.String = item.Description
@@ -115,12 +115,12 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 		}
 
 		_, err = db.CreatePost(context.Background(), database.CreatePostParams{
-			ID: uuid.New(),
-			Title: item.Title,
+			ID:          uuid.New(),
+			Title:       item.Title,
 			Description: description,
 			PublishedAt: pubAt,
-			Url: item.Link,
-			FeedID: feed.ID,
+			Url:         item.Link,
+			FeedID:      feed.ID,
 		})
 
 		if err != nil {

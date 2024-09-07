@@ -52,3 +52,21 @@ func (apiCfg *Handler) GetUserByAPIKey(w http.ResponseWriter, r *http.Request, u
 		"data":    convertDatabaseUserToAPIUser(user),
 	})
 }
+
+func (apiCfg *Handler) GetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
+	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  10,
+	})
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error creating user: %v", err))
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"message": "posts retrieved successfully",
+		"success": true,
+		"data":    convertDatabasePostsToAPIPosts(posts),
+	})
+}
