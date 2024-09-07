@@ -3,9 +3,14 @@ package handlers
 import (
 	"time"
 
+	"github.com/codebyaadi/rss-feed-agg/config"
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
 	"github.com/google/uuid"
 )
+
+type Handler struct {
+	*config.ApiConfig
+}
 
 type User struct {
 	ID        uuid.UUID `json:"id"`

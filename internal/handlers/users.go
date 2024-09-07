@@ -8,14 +8,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/codebyaadi/rss-feed-agg/config"
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 )
-
-type Handler struct {
-	*config.ApiConfig
-}
 
 func (apiCfg *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
