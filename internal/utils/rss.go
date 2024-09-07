@@ -2,14 +2,17 @@ package utils
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -98,7 +101,34 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 	}
 
 	for _, item := range rssFeed.Channel.Item {
-		log.Println("found post", item.Title, "on feed", feed.Name)
+		
+		description := sql.NullString{}
+		if item.Description != "" {
+			description.String = item.Description
+			description.Valid = true
+		}
+
+		pubAt, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			log.Printf("error parsing date %v: %v", item.PubDate, err)
+			continue
+		}
+
+		_, err = db.CreatePost(context.Background(), database.CreatePostParams{
+			ID: uuid.New(),
+			Title: item.Title,
+			Description: description,
+			PublishedAt: pubAt,
+			Url: item.Link,
+			FeedID: feed.ID,
+		})
+
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate key") {
+				continue
+			}
+			log.Printf("error creating post: %v", err)
+		}
 	}
 	log.Printf("feed %s collected, %v posts found", feed.Name, len(rssFeed.Channel.Item))
 }
