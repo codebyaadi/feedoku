@@ -11,6 +11,7 @@
     pkgs.sqlc
     pkgs.goose
     pkgs.redis
+    pkgs.docker-compose
   ];
   # Sets environment variables in the workspace
   env = {};
