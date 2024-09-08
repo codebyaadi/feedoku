@@ -17,6 +17,7 @@ import (
 	"github.com/codebyaadi/rss-feed-agg/config"
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
 	"github.com/codebyaadi/rss-feed-agg/internal/handlers"
+	"github.com/codebyaadi/rss-feed-agg/internal/redis"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 )
 
@@ -37,6 +38,11 @@ func main() {
 	if dbUrl == "" {
 		log.Fatal("POSTGRES_URL must be set")
 	}
+
+	if err := redis.InitRedis(); err != nil {
+		log.Fatalf("can't connect to Redis: %v", err)
+	}
+	defer redis.CloseRedis()
 
 	conn, err := sql.Open("postgres", dbUrl)
 	if err != nil {
