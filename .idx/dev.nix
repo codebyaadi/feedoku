@@ -10,6 +10,7 @@
     pkgs.go
     pkgs.sqlc
     pkgs.goose
+    pkgs.redis
   ];
   # Sets environment variables in the workspace
   env = {};
@@ -23,7 +24,8 @@
     workspace = {
       # Runs when a workspace is (re)started
       onStart= {
-        run-server = "air";
+        run-redis-server = "redis-server";
+        # run-server = "air";
       };
       # To run something each time the workspace is first created, use the `onStart` hook
     };
