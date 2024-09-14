@@ -26,6 +26,7 @@
       # Runs when a workspace is (re)started
       onStart= {
         run-redis-server = "redis-server";
+        start-docker-postgres = "docker start rss-postgres";
         # run-server = "air";
       };
       # To run something each time the workspace is first created, use the `onStart` hook
