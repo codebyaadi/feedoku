@@ -1,0 +1,11 @@
+-- +goose Up
+ALTER TABLE users ADD COLUMN email VARCHAR(255) UNIQUE NOT NULL;
+ALTER TABLE users ADD COLUMN password_hash VARCHAR(255) NOT NULL;
+ALTER TABLE users ADD COLUMN oauth_provider VARCHAR(255);
+ALTER TABLE users ADD COLUMN oauth_id VARCHAR(255) UNIQUE;
+
+-- +goose Down
+ALTER TABLE users DROP COLUMN email;
+ALTER TABLE users DROP COLUMN password_hash;
+ALTER TABLE users DROP COLUMN oauth_provider;
+ALTER TABLE users DROP COLUMN oauth_id;

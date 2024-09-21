@@ -4,6 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // GetAPIKey retrieves the API key from the provided HTTP headers.
@@ -44,4 +46,14 @@ func GetAPIKey(headers http.Header) (string, error) {
 	}
 
 	return vals[1], nil
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

@@ -70,6 +70,7 @@ func main() {
 	mux.HandleFunc("GET /health", handlerHealth)
 	mux.HandleFunc("GET /error", handlerErr)
 	mux.HandleFunc(("POST /users/create"), handler.CreateUser)
+	mux.HandleFunc("POST /users/login", handler.LoginUser)
 	mux.HandleFunc(("GET /users"), handler.AuthMiddleware(handler.GetUserByAPIKey))
 	mux.HandleFunc(("POST /feeds/create"), handler.AuthMiddleware(handler.CreateFeed))
 	mux.HandleFunc(("GET /feeds"), handler.GetAllFeeds)
