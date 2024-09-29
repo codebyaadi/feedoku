@@ -7,7 +7,7 @@ const links = {
 };
 
 export const siteConfig = {
-  name: 'Feedify',
+  name: 'Feedoku.',
   description:
     'An open source RSS Feed Aggregator created using Golang and Next.js',
   url: 'https://',
