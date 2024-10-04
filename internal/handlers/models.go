@@ -19,6 +19,8 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	ApiKey    string    `json:"api_key"`
 	Email     string    `json:"email"`
+	AccessToken string	`json:"access_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
 }
 
 // convertDatabaseUserToAPIUser converts a database user model to an API user model.
@@ -31,8 +33,8 @@ type User struct {
 //
 // This function maps the fields from the database-specific User struct to the API-specific
 // User struct, ensuring the data is properly formatted for JSON serialization and API responses.
-func convertDatabaseUserToAPIUser(dbUser database.User) User {
-	return User{
+func convertDatabaseUserToAPIUser(dbUser database.User, accessToken, refreshToken string) User {
+	user := User{
 		ID:        dbUser.ID,
 		Name:      dbUser.Name,
 		CreatedAt: dbUser.CreatedAt,
@@ -40,6 +42,15 @@ func convertDatabaseUserToAPIUser(dbUser database.User) User {
 		ApiKey:    dbUser.ApiKey,
 		Email:     dbUser.Email,
 	}
+
+	if accessToken != "" {
+		user.AccessToken = accessToken
+	}
+	if refreshToken != "" {
+		user.RefreshToken = refreshToken
+	}
+
+	return user
 }
 
 type Feed struct {

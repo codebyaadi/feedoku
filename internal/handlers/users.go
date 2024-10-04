@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/codebyaadi/rss-feed-agg/internal/auth"
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 )
@@ -50,7 +51,7 @@ func (apiCfg *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
 		"message": "user created successfully",
 		"success": true,
-		"data":    convertDatabaseUserToAPIUser(user),
+		"data":    convertDatabaseUserToAPIUser(user, "", ""),
 	})
 }
 
@@ -79,10 +80,16 @@ func (apiCfg *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	accessToken, refreshToken, err := auth.GenerateJWT(user.ID, user.Name, user.Email, user.ApiKey)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error generating tokens: %v", err))
+		return
+	}
+
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "user logged in successfully",
 		"success": true,
-		"data":    convertDatabaseUserToAPIUser(user),
+		"data":    convertDatabaseUserToAPIUser(user, accessToken, refreshToken),
 	})
 }
 
@@ -91,7 +98,7 @@ func (apiCfg *Handler) GetUserByAPIKey(w http.ResponseWriter, r *http.Request, u
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "user retrieved successfully",
 		"success": true,
-		"data":    convertDatabaseUserToAPIUser(user),
+		"data":    convertDatabaseUserToAPIUser(user, "", ""),
 	})
 }
 
