@@ -15,6 +15,7 @@
     pkgs.nodejs_20
     pkgs.nodePackages.pnpm
     pkgs.bun
+    pkgs.gnumake
   ];
   # Sets environment variables in the workspace
   env = {};
