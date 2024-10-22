@@ -10,14 +10,20 @@ GOOSE_SCRIPT := scripts/goose.sh
 NEXTJS_DIR := ./www
 
 # Default target
-.PHONY: all
-all: build
+.PHONY: ready
+ready: start-postgres start-redis
 
 # Build the project
 .PHONY: build
 build:
 	@echo "Building the project..."
 	go build -o $(BUILD_DIR)/$(APP_NAME) $(SRC_FILE)
+
+# Run air for live reloading
+.PHONY: run-air
+run-air:
+	@echo "Running air for live reloading..."
+	air
 
 # Start PostgreSQL container
 .PHONY: start-postgres
@@ -68,6 +74,7 @@ help:
 	@echo "  build           - Build the project"
 	@echo "  start-postgres  - Start PostgreSQL container"
 	@echo "  start-redis     - Start Redis server"
+	@echo "  run-air         - Run air for live reloading"
 	@echo "  format          - Format the code"
 	@echo "  migrate-up      - Run Goose migrations (up)"
 	@echo "  migrate-down    - Run Goose migrations (down)"
