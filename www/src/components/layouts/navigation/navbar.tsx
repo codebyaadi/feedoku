@@ -6,6 +6,7 @@ import { css } from 'styled-system/css';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { siteConfig } from '@/config/site';
+import { flex } from 'styled-system/patterns';
 
 const Navbar = () => {
   const router = useRouter();
@@ -13,18 +14,20 @@ const Navbar = () => {
   return (
     <nav
       className={css({
-        position: 'absolute',
+        position: 'fixed',
+        top: '0',
+        zIndex: '1',
         w: 'full',
+        // bgColor: 'bg.canvas',
+        // borderWidth: '1',
+        borderStyle: 'solid'
       })}
     >
       <div
-        className={css({
+        className={flex({
           fontFamily: 'body',
-          maxW: '7xl',
-          mx: { base: '4', lg: 'auto' },
-          py: '3',
-          display: 'flex',
-          flexDir: 'row',
+          mx: '4',
+          py: '2',
           justifyContent: 'space-between',
           alignItems: 'center',
         })}
@@ -33,7 +36,7 @@ const Navbar = () => {
           <Link
             href='/'
             className={css({
-              fontSize: 'larger',
+              fontSize: 'lg',
               fontWeight: 'medium',
               color: 'accent.emphasized',
             })}
@@ -43,6 +46,7 @@ const Navbar = () => {
         </div>
         <div>
           <Button
+            size='xs'
             variant='ghost'
             className={css({
               mr: '2',
@@ -52,6 +56,7 @@ const Navbar = () => {
             Log In
           </Button>
           <Button
+            size='xs'
             className={css({
               fontWeight: 'medium',
             })}
