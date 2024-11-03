@@ -1,10 +1,11 @@
 package auth
 
 import (
+	"fmt"
 	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -20,7 +21,7 @@ type Claims struct {
 	Name   string    `json:"name"`
 	Email  string    `json:"email"`
 	ApiKey string    `json:"api_key"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func GenerateJWT(userId uuid.UUID, name, email, apiKey string) (string, string, error) {
@@ -31,8 +32,8 @@ func GenerateJWT(userId uuid.UUID, name, email, apiKey string) (string, string, 
 		Name:   name,
 		Email:  email,
 		ApiKey: apiKey,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: jwt.At(accessExpirationTime),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: &jwt.NumericDate{Time: accessExpirationTime},
 		},
 	}
 
@@ -49,8 +50,8 @@ func GenerateJWT(userId uuid.UUID, name, email, apiKey string) (string, string, 
 		Name:   name,
 		Email:  email,
 		ApiKey: apiKey,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: jwt.At(refreshExpirationTime),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: &jwt.NumericDate{Time: refreshExpirationTime},
 		},
 	}
 
