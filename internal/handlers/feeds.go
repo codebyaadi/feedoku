@@ -7,11 +7,12 @@ import (
 	"time"
 
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
+	"github.com/codebyaadi/rss-feed-agg/internal/models"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 	"github.com/google/uuid"
 )
 
-func (apiCfg *Handler) CreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+func (h *Handler) CreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
@@ -25,7 +26,7 @@ func (apiCfg *Handler) CreateFeed(w http.ResponseWriter, r *http.Request, user d
 		return
 	}
 
-	feed, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
+	feed, err := h.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID:        uuid.New(),
 		Name:      params.Name,
 		CreatedAt: time.Now().UTC(),
@@ -42,12 +43,12 @@ func (apiCfg *Handler) CreateFeed(w http.ResponseWriter, r *http.Request, user d
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
 		"message": "feed created successfully",
 		"success": true,
-		"data":    convertDatabaseFeedToAPIFeed(feed),
+		"data":    models.ConvertDatabaseFeedToAPIFeed(feed),
 	})
 }
 
-func (apiCfg *Handler) GetAllFeeds(w http.ResponseWriter, r *http.Request) {
-	feeds, err := apiCfg.DB.GetFeeds(r.Context())
+func (h *Handler) GetAllFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := h.DB.GetFeeds(r.Context())
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting feeds: %v", err))
@@ -57,6 +58,6 @@ func (apiCfg *Handler) GetAllFeeds(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "feeds retrieved successfully",
 		"success": true,
-		"data":    convertDatabaseFeedsToAPIFeeds(feeds),
+		"data":    models.ConvertDatabaseFeedsToAPIFeeds(feeds),
 	})
 }

@@ -10,10 +10,11 @@ import (
 
 	"github.com/codebyaadi/rss-feed-agg/internal/auth"
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
+	"github.com/codebyaadi/rss-feed-agg/internal/models"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 )
 
-func (apiCfg *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
@@ -34,7 +35,7 @@ func (apiCfg *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+	user, err := h.DB.CreateUser(r.Context(), database.CreateUserParams{
 		ID:           uuid.New(),
 		Name:         params.Name,
 		Email:        params.Email,
@@ -51,11 +52,11 @@ func (apiCfg *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
 		"message": "user created successfully",
 		"success": true,
-		"data":    convertDatabaseUserToAPIUser(user, "", ""),
+		"data":    models.ConvertDatabaseUserToAPIUser(user, "", ""),
 	})
 }
 
-func (apiCfg *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -69,7 +70,7 @@ func (apiCfg *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := apiCfg.DB.GetUserByEmail(r.Context(), params.Email)
+	user, err := h.DB.GetUserByEmail(r.Context(), params.Email)
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting user: %v", err))
 		return
@@ -89,21 +90,21 @@ func (apiCfg *Handler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "user logged in successfully",
 		"success": true,
-		"data":    convertDatabaseUserToAPIUser(user, accessToken, refreshToken),
+		"data":    models.ConvertDatabaseUserToAPIUser(user, accessToken, refreshToken),
 	})
 }
 
-func (apiCfg *Handler) GetUserByAPIKey(w http.ResponseWriter, r *http.Request, user database.User) {
+func (h *Handler) GetUserByAPIKey(w http.ResponseWriter, r *http.Request, user database.User) {
 
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "user retrieved successfully",
 		"success": true,
-		"data":    convertDatabaseUserToAPIUser(user, "", ""),
+		"data":    models.ConvertDatabaseUserToAPIUser(user, "", ""),
 	})
 }
 
-func (apiCfg *Handler) GetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
-	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
+func (h *Handler) GetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
+	posts, err := h.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
 		UserID: user.ID,
 		Limit:  10,
 	})
@@ -116,6 +117,6 @@ func (apiCfg *Handler) GetPostsForUser(w http.ResponseWriter, r *http.Request, u
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "posts retrieved successfully",
 		"success": true,
-		"data":    convertDatabasePostsToAPIPosts(posts),
+		"data":    models.ConvertDatabasePostsToAPIPosts(posts),
 	})
 }

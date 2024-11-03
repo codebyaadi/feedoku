@@ -7,11 +7,12 @@ import (
 	"time"
 
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
+	"github.com/codebyaadi/rss-feed-agg/internal/models"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 	"github.com/google/uuid"
 )
 
-func (apiCfg *Handler) CreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+func (h *Handler) CreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		FeedID uuid.UUID `json:"feed_id"`
 	}
@@ -24,7 +25,7 @@ func (apiCfg *Handler) CreateFeedFollow(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	feedFollow, err := apiCfg.DB.CreateFeedFollow(r.Context(), database.CreateFeedFollowParams{
+	feedFollow, err := h.DB.CreateFeedFollow(r.Context(), database.CreateFeedFollowParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
@@ -40,12 +41,12 @@ func (apiCfg *Handler) CreateFeedFollow(w http.ResponseWriter, r *http.Request, 
 	utils.RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
 		"message": "follow feed created successfully",
 		"success": true,
-		"data":    convertDatabaseFeedFollowToAPIFeedFollow(feedFollow),
+		"data":    models.ConvertDatabaseFeedFollowToAPIFeedFollow(feedFollow),
 	})
 }
 
-func (apiCfg *Handler) GetAllFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
-	feeds, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ID)
+func (h *Handler) GetAllFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
+	feeds, err := h.DB.GetFeedFollows(r.Context(), user.ID)
 
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("error getting feeds: %v", err))
@@ -55,11 +56,11 @@ func (apiCfg *Handler) GetAllFeedFollows(w http.ResponseWriter, r *http.Request,
 	utils.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "feeds retrieved successfully",
 		"success": true,
-		"data":    convertDatabaseFeedFollowsToAPIFeedFollows(feeds),
+		"data":    models.ConvertDatabaseFeedFollowsToAPIFeedFollows(feeds),
 	})
 }
 
-func (apiCfg *Handler) DeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+func (h *Handler) DeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
 	feedFollowIDStr := r.PathValue("feedFollowID")
 
 	feedFollowID, err := uuid.Parse(feedFollowIDStr)
@@ -68,7 +69,7 @@ func (apiCfg *Handler) DeleteFeedFollow(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	err = apiCfg.DB.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
+	err = h.DB.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
 		ID:     feedFollowID,
 		UserID: user.ID,
 	})
