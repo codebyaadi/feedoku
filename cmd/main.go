@@ -18,6 +18,7 @@ import (
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
 	"github.com/codebyaadi/rss-feed-agg/internal/handlers"
 	"github.com/codebyaadi/rss-feed-agg/internal/redis"
+	"github.com/codebyaadi/rss-feed-agg/internal/rss"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
 )
 
@@ -55,7 +56,7 @@ func main() {
 		DB: db,
 	}
 
-	go utils.RSSFeedScrapper(db, 10, time.Minute)
+	go rss.RSSFeedScrapper(db, 10, time.Minute)
 
 	handler := &handlers.Handler{ApiConfig: apiCfg}
 
