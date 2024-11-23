@@ -5,7 +5,7 @@ import React from 'react';
 
 const Navbar = () => {
   return (
-    <nav className='fixed top-0 z-[1] w-full bg-transparent font-outfit px-0 lg:px-6'>
+    <nav className='fixed top-0 z-[1] w-full bg-transparent px-0 font-outfit lg:px-6'>
       <div className='mx-4 flex items-center justify-between py-2'>
         <Link href='/' className='font-semibold text-amber-300'>
           {siteConfig.name}
