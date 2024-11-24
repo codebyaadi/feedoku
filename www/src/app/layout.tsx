@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { outfit } from './fonts';
 import { siteConfig } from '@/config/site';
+import { ThemeProvider } from '@/providers/theme-providers';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -30,7 +31,14 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,3 +1,4 @@
+import { ModeToggle } from '@/components/mode-toggle';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
 import Link from 'next/link';
@@ -11,6 +12,7 @@ const Navbar = () => {
           {siteConfig.name}
         </Link>
         <div className='flex items-center justify-center gap-2 font-normal'>
+          <ModeToggle />
           <Button
             variant='secondary'
             size='sm'
