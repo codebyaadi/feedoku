@@ -12,7 +12,7 @@ export function ModeToggle() {
       variant='ghost'
       type='button'
       size='icon'
-      className='size-12 rounded-full px-2'
+      className='size-8 rounded px-2'
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
       <SunIcon className='h-[1.2rem] w-[1.2rem] text-neutral-800 dark:hidden dark:text-neutral-200' />
