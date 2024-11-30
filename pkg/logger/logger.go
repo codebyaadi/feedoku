@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"os"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -12,26 +13,26 @@ var Logger *zap.Logger
 func New() error {
 	// Console encoder with color for stdout
 	consoleEncoder := zapcore.NewConsoleEncoder(zapcore.EncoderConfig{
-		MessageKey:   "msg",
-		LevelKey:     "level",
-		TimeKey:      "ts",
-		CallerKey:    "caller",
+		MessageKey:    "msg",
+		LevelKey:      "level",
+		TimeKey:       "ts",
+		CallerKey:     "caller",
 		StacktraceKey: "stacktrace",
-		EncodeTime:   zapcore.ISO8601TimeEncoder,
-		EncodeLevel:  zapcore.CapitalColorLevelEncoder, // Colorize log levels for the console
-		EncodeCaller: zapcore.ShortCallerEncoder,
+		EncodeTime:    zapcore.ISO8601TimeEncoder,
+		EncodeLevel:   zapcore.CapitalColorLevelEncoder, // Colorize log levels for the console
+		EncodeCaller:  zapcore.ShortCallerEncoder,
 	})
 
 	// File encoder for plain text (non-colored)
 	fileEncoder := zapcore.NewConsoleEncoder(zapcore.EncoderConfig{
-		MessageKey:   "msg",
-		LevelKey:     "level",
-		TimeKey:      "ts",
-		CallerKey:    "caller",
+		MessageKey:    "msg",
+		LevelKey:      "level",
+		TimeKey:       "ts",
+		CallerKey:     "caller",
 		StacktraceKey: "stacktrace",
-		EncodeTime:   zapcore.ISO8601TimeEncoder,
-		EncodeLevel:  zapcore.CapitalLevelEncoder, // No color in the file, but still show log level
-		EncodeCaller: zapcore.ShortCallerEncoder,
+		EncodeTime:    zapcore.ISO8601TimeEncoder,
+		EncodeLevel:   zapcore.CapitalLevelEncoder, // No color in the file, but still show log level
+		EncodeCaller:  zapcore.ShortCallerEncoder,
 	})
 
 	logFile, err := os.OpenFile("feedoku-logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)

@@ -10,9 +10,10 @@ import (
 	"strings"
 	"sync"
 	"time"
-	
+
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
 	"github.com/codebyaadi/rss-feed-agg/internal/models"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"

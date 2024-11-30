@@ -4,7 +4,7 @@ Feedoku is a modern RSS Feed aggregator built with Next.js, Go, Postgres, Redis,
 
 ## 🚀 Features
 
-- Real-time feed updates using Kafka
+- Real-time feed updates using Kafka ( Not implemented yet )
 - Fast content delivery with Redis caching
 - Responsive web interface built with Next.js
 - RESTful API powered by Go
