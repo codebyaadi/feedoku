@@ -3,3 +3,4 @@ tmp/
 _tmp/
 .vscode/
 *.rdb
+feedoku-logs.txt

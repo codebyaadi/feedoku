@@ -1,4 +1,6 @@
 .idx
 .vscode
 tmp
+_tmp
+www/
 .env

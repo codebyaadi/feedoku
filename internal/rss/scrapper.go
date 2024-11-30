@@ -4,17 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"encoding/xml"
+	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
-
+	
+	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
 	"github.com/codebyaadi/rss-feed-agg/internal/models"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
-	"github.com/google/uuid"
+	"github.com/codebyaadi/rss-feed-agg/pkg/logger"
 )
 
 func urlToFeed(url string) (models.RSSFeed, error) {
@@ -48,7 +50,9 @@ func RSSFeedScrapper(
 	concurrency int,
 	timeBetweenRequest time.Duration,
 ) {
-	log.Printf("scrapping on %v goroutines every %s duration", concurrency, timeBetweenRequest)
+	logger.Logger.Info(
+		fmt.Sprintf("scrapping on %v goroutines every %s duration", concurrency, timeBetweenRequest),
+	)
 	ticker := time.NewTicker(timeBetweenRequest)
 	for ; ; <-ticker.C {
 		feeds, err := db.GetNextFeedToFetch(
@@ -57,7 +61,7 @@ func RSSFeedScrapper(
 		)
 
 		if err != nil {
-			log.Printf("error fetching feeds: %v", err)
+			logger.Logger.Error("error fetching feeds:", zap.Error(err))
 			continue
 		}
 
@@ -75,13 +79,13 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 
 	_, err := db.MarkFeedAsFetched(context.Background(), feed.ID)
 	if err != nil {
-		log.Println("error marking feed as fetched: ", err)
+		logger.Logger.Error("error marking feed as fetched: ", zap.Error(err))
 		return
 	}
 
 	rssFeed, err := urlToFeed(feed.Url)
 	if err != nil {
-		log.Println("error fetching feed: ", err)
+		logger.Logger.Error("error fetching feed: ", zap.Error(err))
 		return
 	}
 
@@ -95,7 +99,10 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 
 		pubAt, err := utils.ParseDate(item.PubDate)
 		if err != nil {
-			log.Printf("error parsing date %v: %v", item.PubDate, err)
+			logger.Logger.Error(
+				fmt.Sprintf("error parsing date %v:", item.PubDate),
+				zap.Error(err),
+			)
 			continue
 		}
 
@@ -112,8 +119,12 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 			if strings.Contains(err.Error(), "duplicate key") {
 				continue
 			}
-			log.Printf("error creating post: %v", err)
+			logger.Logger.Error("error creating post: ", zap.Error(err))
 		}
 	}
-	log.Printf("feed %s collected, %v posts found", feed.Name, len(rssFeed.Channel.Item))
+	logger.Logger.Info(
+		fmt.Sprintf(
+			"feed %s collected, %v posts found", feed.Name, len(rssFeed.Channel.Item),
+		),
+	)
 }

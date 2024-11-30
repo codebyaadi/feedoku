@@ -2,10 +2,11 @@ package redis
 
 import (
 	"context"
-	"log"
 	"os"
 
+	"github.com/codebyaadi/rss-feed-agg/pkg/logger"
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 )
 
 var Client *redis.Client
@@ -15,7 +16,7 @@ func InitRedis() error {
 	addr := os.Getenv("REDIS_ADDR")
 	if addr == "" {
 		addr = "localhost:6379"
-		log.Printf("defaulting to addr %s", addr)
+		logger.Logger.Info("defaulting to addr %s", zap.String("addr", addr))
 	}
 	password := os.Getenv("REDIS_PASSWORD")
 	db := 0
@@ -23,7 +24,7 @@ func InitRedis() error {
 	if url != "" {
 		opt, err := redis.ParseURL(url)
 		if err != nil {
-			log.Fatalf("failed to parse Redis URL: %v", err)
+			logger.Logger.Fatal("failed to parse Redis URL: %v", zap.Error(err))
 		}
 		Client = redis.NewClient(opt)
 	} else {
@@ -36,12 +37,12 @@ func InitRedis() error {
 
 	_, err := Client.Ping(context.Background()).Result()
 	if err != nil {
-		log.Fatalf("failed to connect to redis: %v", err)
+		logger.Logger.Fatal("failed to connect to redis: %v", zap.Error(err))
 		Client.Close()
 		return err
 	}
 
-	log.Println("successfully connected to Redis")
+	logger.Logger.Info("successfully connected to Redis")
 	return nil
 }
 

@@ -2,8 +2,10 @@ package utils
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
+
+	"github.com/codebyaadi/rss-feed-agg/pkg/logger"
+	"go.uber.org/zap"
 )
 
 // RespondWithJSON sends a JSON response with the specified status code and payload.
@@ -20,7 +22,7 @@ import (
 func RespondWithJSON(w http.ResponseWriter, status int, payload interface{}) {
 	response, err := json.Marshal(payload)
 	if err != nil {
-		log.Printf("failed to marshal json response: %v", err)
+		logger.Logger.Error("failed to marshal json response: %v", zap.Error(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -43,7 +45,7 @@ func RespondWithJSON(w http.ResponseWriter, status int, payload interface{}) {
 // the error message is logged.
 func RespondWithError(w http.ResponseWriter, status int, msg string) {
 	if status >= 499 {
-		log.Printf("Server error: %s", msg)
+		logger.Logger.Error("server error: ", zap.String("msg", msg))
 	}
 
 	payload := map[string]string{"error": msg}

@@ -13,6 +13,7 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 
 	"github.com/codebyaadi/rss-feed-agg/config"
 	"github.com/codebyaadi/rss-feed-agg/internal/database"
@@ -20,34 +21,39 @@ import (
 	"github.com/codebyaadi/rss-feed-agg/internal/redis"
 	"github.com/codebyaadi/rss-feed-agg/internal/rss"
 	"github.com/codebyaadi/rss-feed-agg/internal/utils"
+	"github.com/codebyaadi/rss-feed-agg/pkg/logger"
 )
 
 func main() {
-	log.Print("starting server...")
+	if err := logger.New(); err != nil {
+		log.Fatal("Error initializing logger", err)
+	}
+	defer logger.Logger.Sync()
+	logger.Logger.Info("starting server...")
 
 	if err := godotenv.Load(); err != nil {
-		log.Printf("Error loading .env file: %v\n", err)
+		logger.Logger.Warn("Error loading .env file", zap.Error(err))
 	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
-		log.Printf("defaulting to port %s", port)
+		logger.Logger.Warn("defaulting to port", zap.String("port", port))
 	}
 
 	dbUrl := os.Getenv("POSTGRES_URL")
 	if dbUrl == "" {
-		log.Fatal("POSTGRES_URL must be set")
+		logger.Logger.Fatal("POSTGRES_URL must be set")
 	}
 
 	if err := redis.InitRedis(); err != nil {
-		log.Fatalf("can't connect to Redis: %v", err)
+		logger.Logger.Fatal("Can't connect to Redis", zap.Error(err))
 	}
 	defer redis.CloseRedis()
 
 	conn, err := sql.Open("postgres", dbUrl)
 	if err != nil {
-		log.Fatalf("can't connect to postgres database %v", err)
+		logger.Logger.Fatal("can't connect to postgres database %v", zap.Error(err))
 	}
 	defer conn.Close()
 
@@ -61,10 +67,10 @@ func main() {
 	handler := &handlers.Handler{ApiConfig: apiCfg}
 
 	if err := conn.Ping(); err != nil {
-		log.Fatalf("can't reach postgres database %v", err)
+		logger.Logger.Fatal("can't reach postgres database %v", zap.Error(err))
 	}
 
-	log.Println("successfully connected to database")
+	logger.Logger.Info("successfully connected to database")
 
 	mux := http.NewServeMux()
 
@@ -90,22 +96,22 @@ func main() {
 	signal.Notify(shutdownCh, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		log.Printf("listening on port %s", port)
+		logger.Logger.Info("listening on port %s", zap.String("port", port))
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("could not listen on %s: %v\n", port, err)
+			logger.Logger.Fatal("could not listen on port", zap.String("port", port), zap.Error(err))
 		}
 	}()
 
 	<-shutdownCh
-	log.Println("shutting down...")
+	logger.Logger.Info("shutting down...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("could not gracefully shutdown the server: %v\n", err)
+		logger.Logger.Fatal("could not gracefully shutdown the server", zap.Error(err))
 	}
-	log.Println("server stopped")
+	logger.Logger.Info("Server stopped")
 }
 
 func handlerHealth(w http.ResponseWriter, r *http.Request) {
