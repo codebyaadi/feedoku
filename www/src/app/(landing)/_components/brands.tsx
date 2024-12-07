@@ -28,7 +28,7 @@ export const Brands = () => {
   }, []);
 
   return (
-    <div className='mt-20 flex w-full flex-col items-center justify-between gap-12 px-4 py-4 lg:px-10'>
+    <div className='mt-20 hidden w-full flex-col items-center justify-between gap-12 px-4 py-4 md:flex lg:flex lg:px-10'>
       <div className='text-center'>
         Stay up to date with the world&apos;s best content platforms
       </div>
