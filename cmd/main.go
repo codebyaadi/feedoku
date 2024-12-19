@@ -13,6 +13,7 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 	"go.uber.org/zap"
 
 	"github.com/codebyaadi/rss-feed-agg/config"
@@ -72,6 +73,12 @@ func main() {
 
 	logger.Logger.Info("successfully connected to database")
 
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"https://3000-idx-rss-feed-agg-1718623292688.cluster-7ubberrabzh4qqy2g4z7wgxuw2.cloudworkstations.dev/"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodDelete},
+		AllowCredentials: true,
+	})
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /health", handlerHealth)
@@ -89,7 +96,7 @@ func main() {
 	addr := ":" + port
 	server := &http.Server{
 		Addr:    addr,
-		Handler: mux,
+		Handler: c.Handler(mux),
 	}
 
 	shutdownCh := make(chan os.Signal, 1)
