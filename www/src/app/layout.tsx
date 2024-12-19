@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { outfit } from './fonts';
+import { Toaster } from '@/components/ui/sonner';
 import { siteConfig } from '@/config/site';
 import { ThemeProvider } from '@/providers/theme-providers';
 
@@ -39,6 +40,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
