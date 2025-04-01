@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+better-auth_migrations
 
 # debug
 npm-debug.log*

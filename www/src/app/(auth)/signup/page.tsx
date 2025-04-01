@@ -1,11 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -26,17 +24,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { toast } from 'sonner';
-import { fetchWithAuth } from '@/lib/fetcher';
+import { authClient } from '@/lib/auth-client';
 
 const formSchema = z.object({
   name: z.string().min(3, {
-    message: 'Name must be at least 3 character',
+    message: 'Name must be at least 3 characters',
   }),
   email: z.string().email({
     message: 'Invalid email address',
   }),
   password: z.string().min(8, {
-    message: 'Password must be at least 8 character',
+    message: 'Password must be at least 8 characters',
   }),
 });
 
@@ -52,22 +50,23 @@ export default function SignUp() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const res = await fetchWithAuth('/users/create', {
-        method: 'POST',
-        body: JSON.stringify(values),
+      const { data, error } = await authClient.signUp.email({
+        email: values.email,
+        password: values.password,
+        name: values.name,
       });
 
-      if (!res.ok) {
+      if (error) {
         toast.error('Account creation failed');
-        throw new Error(`Error: ${res.status} - ${res.statusText}`);
+        console.error('Error:', error);
+        return;
       }
 
       toast.success('Account created successfully');
-
-      const data = await res.json();
-      console.log('Data: ', data);
+      console.log('Data:', data);
     } catch (error) {
       console.error('Error submitting the form:', error);
+      toast.error('An unexpected error occurred');
     }
   }
 
@@ -77,7 +76,7 @@ export default function SignUp() {
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
           <CardDescription>
-            Create an account and discover the worlds' best UI component
+            Create an account and discover the world's best UI component
             framework.
           </CardDescription>
         </CardHeader>
@@ -137,13 +136,13 @@ export default function SignUp() {
                 )}
               />
               <Button type='submit' variant='amber' className='!mt-4 w-full'>
-                Log In
+                Sign Up
               </Button>
             </CardContent>
           </form>
         </Form>
         <CardFooter className='text-sm'>
-          Already have an account ?
+          Already have an account?
           <Link href='/signin' className='ml-1 underline'>
             Sign In
           </Link>
