@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { fetchWithAuth } from '@/lib/fetcher';
+import { authClient } from '@/lib/auth-client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
@@ -45,14 +45,20 @@ export default function SignIn() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const res = await fetchWithAuth('/users/login', {
-        method: 'POST',
-        body: JSON.stringify(values),
+      const { data, error } = await authClient.signIn.email({
+        email: values.email,
+        password: values.password,
+        callbackURL: '/',
       });
 
-      toast.error('Logged In Successfully');
-      const data = await res.json();
-      console.log('res: ', data);
+      if (error) {
+        toast.error('Account creation failed');
+        console.error('Error:', error);
+        return;
+      }
+
+      toast.success('Account created successfully');
+      console.log('Data:', data);
     } catch (error) {
       console.error('Error submitting the form:', error);
     }
