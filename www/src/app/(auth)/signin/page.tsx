@@ -112,7 +112,7 @@ export default function SignIn() {
                   </FormItem>
                 )}
               />
-              <Button type='submit' variant='amber' className='!mt-4 w-full'>
+              <Button type='submit' variant='amber' className='mt-4! w-full'>
                 Log In
               </Button>
             </CardContent>
