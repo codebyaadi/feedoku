@@ -21,6 +21,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 const Navbar = () => {
   const { data: session } = authClient.useSession();
   console.log('session: ', session);
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+  };
+
   return (
     <nav className='font-outfit fixed top-0 z-1 w-full bg-transparent px-0 lg:px-6'>
       <div className='mx-4 flex items-center justify-between py-2'>
@@ -31,13 +36,13 @@ const Navbar = () => {
           <ModeToggle />
           {session ? (
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger className='focus:outline-none'>
                 <Avatar>
                   <AvatarImage src={session.user.image || ''} />
                   <AvatarFallback>{session.user.name[0]}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className='w-42'>
+              <DropdownMenuContent className='font-outfit w-42 rounded'>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
@@ -48,6 +53,11 @@ const Navbar = () => {
                   <DropdownMenuItem>
                     Settings
                     <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={handleSignOut}>
+                    Log out
+                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
