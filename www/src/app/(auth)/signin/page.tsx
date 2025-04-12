@@ -20,7 +20,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ReloadIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -35,6 +37,7 @@ const formSchema = z.object({
 });
 
 export default function SignIn() {
+  const [loading, setLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,20 +48,28 @@ export default function SignIn() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const { data, error } = await authClient.signIn.email({
-        email: values.email,
-        password: values.password,
-        callbackURL: '/',
-      });
-
-      if (error) {
-        toast.error('Account creation failed');
-        console.error('Error:', error);
-        return;
-      }
-
-      toast.success('Account created successfully');
-      console.log('Data:', data);
+      const { data, error } = await authClient.signIn.email(
+        {
+          email: values.email,
+          password: values.password,
+          callbackURL: '/',
+        },
+        {
+          onRequest: (ctx) => {
+            setLoading(true);
+          },
+          onSuccess: (ctx) => {
+            setLoading(false);
+            toast.success('Logged in successfully');
+            console.log(ctx.response);
+          },
+          onError: (ctx) => {
+            setLoading(false);
+            toast.error(ctx.error.message);
+            console.log(ctx.error);
+          },
+        }
+      );
     } catch (error) {
       console.error('Error submitting the form:', error);
     }
@@ -112,8 +123,13 @@ export default function SignIn() {
                   </FormItem>
                 )}
               />
-              <Button type='submit' variant='amber' className='mt-4! w-full'>
-                Log In
+              <Button
+                type='submit'
+                variant='amber'
+                className='mt-4! w-full'
+                disabled={loading}
+              >
+                {loading ? 'Logging...' : 'Log In'}
               </Button>
             </CardContent>
           </form>
