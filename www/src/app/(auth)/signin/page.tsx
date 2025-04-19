@@ -1,5 +1,6 @@
 'use client';
 
+import { BorderBeam } from '@/components/magicui/border-beam';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -77,7 +78,7 @@ export default function SignIn() {
 
   return (
     <div className='mx-4 w-full md:mx-auto md:w-1/2 lg:mx-auto lg:w-1/2'>
-      <Card className='rounded-md shadow-none'>
+      <Card className='relative overflow-hidden rounded-md shadow-none'>
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
           <CardDescription>
@@ -140,6 +141,7 @@ export default function SignIn() {
             Sign Up
           </Link>
         </CardFooter>
+        <BorderBeam duration={8} size={100} colorTo='#ffd230' />
       </Card>
     </div>
   );
