@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import { BorderBeam } from '@/components/magicui/border-beam';
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -72,7 +73,7 @@ export default function SignUp() {
 
   return (
     <div className='mx-4 w-full md:mx-auto lg:mx-auto lg:w-1/2'>
-      <Card className='rounded-md shadow-none'>
+      <Card className='relative overflow-hidden rounded-md shadow-none'>
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
           <CardDescription>
@@ -147,6 +148,7 @@ export default function SignUp() {
             Sign In
           </Link>
         </CardFooter>
+        <BorderBeam duration={8} size={100} colorTo='#ffd230' />
       </Card>
     </div>
   );
